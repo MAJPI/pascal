@@ -17,7 +17,7 @@ type  Tznamka=record
               vek:byte;
               pohlavie:boolean;
               adresa:Tadresa;
-              znamka:array[1..10] of Tznamka;
+              znamky:array[1..10] of Tznamka;
               end;
 const ps=5;
 var student:array[1..ps] of Tstudent;

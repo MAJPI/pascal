@@ -1,0 +1,93 @@
+program zaznam;
+uses crt;
+type  Tadresa=record
+              ulica:string[20];
+              cislos:word;
+              cisloo:byte;
+              mesto:string[30];
+              psc:string[5];
+              end;
+      Tstudent=record
+              meno:string[10];
+              priezvisko:string[20];
+              vek:byte;
+              pohlavie:boolean;
+              adresa:Tadresa;
+              end;
+const ps=5;
+var student:array[1..ps] of Tstudent;
+    po:char;
+    pscp:string[5];
+    flag:boolean;
+    i,j:byte;
+    sub:text;
+    riadok:string;
+    c:integer;
+begin
+clrscr;
+assign(sub,'studenti.txt');
+reset(sub);
+for j:=1 to ps do begin
+                 readln(sub,riadok);
+                 student[j].meno:=riadok;
+                 readln(sub,riadok);
+                 student[j].priezvisko:=riadok;
+                 readln(sub,riadok);
+                 val(riadok,student[j].vek,c);
+                 readln(sub,riadok);
+                 if riadok='muz' then student[j].pohlavie:=true
+                                 else student[j].pohlavie:=false;
+                 readln(sub,riadok);
+                 student[j].adresa.ulica:=riadok;
+                 readln(sub,riadok);
+                 val(riadok,student[j].adresa.cislos,c);
+                 readln(sub,riadok);
+                 val(riadok,student[j].adresa.cisloo,c);
+                 readln(sub,riadok);
+                 student[j].adresa.mesto:=riadok;
+                 readln(sub,riadok);
+                 student[j].adresa.psc:=riadok;
+                 {writeln('Student c.',j);
+                 write('Zadaj meno studenta: ');
+                 readln(student[j].meno);
+                 write('Zadaj priezvisko studenta: ');
+                 readln(student[j].priezvisko);
+                 write('Zadaj vek studenta: ');
+                 readln(student[j].vek);
+                 write('Zadaj pohlavie studenta [m/z]: ');
+                 readln(po);
+                 if po='m' then student[j].pohlavie:=true
+                           else student[j].pohlavie:=false;
+                 write('Zadaj nazov ulice: ');
+                 readln(student[j].adresa.ulica);
+                 write('Zadaj cislo supisne: ');
+                 readln(student[j].adresa.cislos);
+                 write('Zadaj cislo orientacne: ');
+                 readln(student[j].adresa.cisloo);
+                 write('Zadaj nazov mesta: ');
+                 readln(student[j].adresa.mesto);
+                 repeat
+                 flag:=true;
+                 write('Zadaj PSC bez medzery: ');
+                 readln(pscp);
+                 for i:=1 to 5 do if NOT((pscp[i]>='0')AND(pscp[i]<='9')) then flag:=false;
+                 until flag;
+                 student[j].adresa.psc:=pscp;
+                 clrscr;}
+                 end;
+for j:=1 to ps do begin
+                 with student[j] do begin
+                                 write(j,'. ',meno:11);
+                                 write(priezvisko:21);
+                                 write(vek:3);
+                                 if pohlavie then writeln('MUZ':5)
+                                             else writeln('ZENA':5);
+                                 write('Adresa: ',adresa.ulica:21);
+                                 write(adresa.cislos:6,'/');
+                                 write(adresa.cisloo:4);
+                                 write(adresa.mesto:31,',');
+                                 writeln(adresa.psc:6);
+                                 end;
+                 end;
+readln;
+end.

@@ -1,6 +1,10 @@
 program zaznam;
 uses crt;
-type  Tadresa=record
+type  Tznamka=record
+              skr:string[3];
+              z:1..5;
+              end;
+      Tadresa=record
               ulica:string[20];
               cislos:word;
               cisloo:byte;
@@ -13,6 +17,7 @@ type  Tadresa=record
               vek:byte;
               pohlavie:boolean;
               adresa:Tadresa;
+              znamka:array[1..10] of Tznamka;
               end;
 const ps=5;
 var student:array[1..ps] of Tstudent;

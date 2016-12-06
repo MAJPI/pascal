@@ -1,0 +1,20 @@
+program zaznam2;
+uses crt;
+type Tstudent=record
+              meno:string[20];
+              priezvisko[30];
+              vek:byte;
+              pohlavie:boolean;
+              end;
+var sub:file of Tstudent;
+    student:Tstudent;
+begin
+clrscr;
+assign(sub,'data.dat');
+rewrite(sub);
+write('Zadaj meno studenta: ');
+readln(student.meno);
+
+write(sub,student);
+close(sub);
+end.

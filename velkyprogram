@@ -1,0 +1,80 @@
+program velkyprogram;
+uses crt;
+type Tstudent=record
+              meno:string[10];
+              priezvisko:string[20];
+              vek:byte;
+              pohlavie:boolean;
+              rc:string[10];
+              end;
+var sub:file of Tstudent;
+    student:Tstudent;
+    volba:char;
+procedure vloz;
+var po:char;
+function RCOK(rc:string):boolean;
+var i:byte;
+    flag:boolean;
+begin
+flag:=true;
+for i:=1 to 10 do begin
+                  if NOT(rc[i]>='0')AND(rc[i]<='9') then flag:=false;
+                  end;
+RCOK:=flag;
+end;
+begin
+clrscr;
+cursoron;
+writeln('                     *** VLOZENIE NOVEHO STUDENTA ***');
+write('Zadaj meno studenta: ');
+readln(student.meno);
+write('Zadaj priezvisko studenta: ');
+readln(student.priezvisko);
+write('Zadaj vek studenta: ');
+readln(student.vek);
+write('Zadaj pohlavie studenta [m/z]: ');
+repeat
+po:=readkey;
+until (po='m')OR(po='z');
+if po='m' then student.pohlavie:=true
+          else student.pohlavie:=false;
+writeln;
+write('Zadaj rodne cislo studenta v tvare (rrmmddabcd) bez lom.: ');
+repeat
+readln(student.rc);
+until RCOK(student.rc);
+seek(sub,filesize(sub));
+write(sub,student);
+end;
+procedure najdi;
+begin
+clrscr;
+writeln('Zacala procedura najdi');
+readln;
+end;
+procedure vypis;
+begin
+clrscr;
+writeln('Zacala procedura vypis');
+readln;
+end;
+begin
+assign(sub,'data.dat');
+reset(sub);
+repeat
+cursoroff;
+clrscr;
+writeln('                     *** PROGRAM DATABAZA STUDENTOV ***');
+writeln('1. Vloz studenta do databazy');
+writeln('2. Najdi studenta v databaze');
+writeln('3. Vypis studentov z databazy');
+writeln('4. Koniec programu');
+volba:=readkey;
+case volba of
+           '1':vloz;
+           '2':najdi;
+           '3':vypis;
+            end;
+until volba='4';
+close(sub);
+end.

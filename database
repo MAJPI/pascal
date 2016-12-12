@@ -1,0 +1,170 @@
+program Database;
+uses crt,dos,sysutils;
+
+type Tstudent=record
+                meno:string[10];
+                priezvisko:string[20];
+                psc:string[11];
+                pohlavie:boolean; //TRUE muž , FALSE žena
+                vek:byte; // 0 - 100
+              end;
+
+
+var
+  student:Tstudent;
+  subor:file of Tstudent;
+  volba:char;
+
+
+function checkNum(retazec:string):boolean;        //vráti TRUE ak nájde číslo v reťazci
+
+
+  var i:byte;
+      numFound:boolean;
+
+  begin
+    numFound:=False;
+
+    for i:=1 to length(retazec) do begin
+        if not(((retazec[i]<='z') and (retazec[i]>='a')) or ((retazec[i]<='Z') and (retazec[i]>='A'))) then numFound:=true;
+    end;
+    if ((numFound) or (length(retazec)=0)) then checkNum:=true
+    else checkNum:=false;
+
+
+  end;
+function vratVek(rok,mesiac,den:word;rc,rcMes,rcDen:string):byte;  //vráti vek študenta na základe RČ a Sys Dátumu
+
+
+
+var rcVek:byte;
+    chyba:byte;
+    rokStr:string;
+    rokInt,rokDen:integer;
+    rcMonth,rcDay:integer;
+    rozdiel:integer;
+    birthday:boolean;
+begin
+
+  val(rc,rcVek,chyba); // rcVek - prve 2 cifry
+  rokStr:=IntToStr(rok);
+  rcMonth:=StrToInt(rcMes);
+  rcDay:=StrToInt(rcDen);
+  rokStr:=copy(rokStr,3,2);
+  rokInt:=StrToInt(rokStr);
+
+  rozdiel:=rokInt-rcVek;
+  birthday:=false;
+  if (mesiac>rcMonth) then birthday:=true;
+  if ((mesiac=rcMonth) and (den>=rcDay)) then birthday:=true;
+  if not(birthday) then dec(rozdiel);
+
+  if (rozdiel)<0 then vratVek:=abs(100+rozdiel)
+  else vratVek:=rozdiel;
+
+end;
+function checkRC(psc:string):boolean;
+var i:byte;
+    flag:boolean;
+begin
+  flag:=true;
+  for i:=1 to length(psc) do begin
+      if not((psc[i]<='9') and (psc[1]>='0')) then flag:=false;
+  end;
+  if ((flag=false) or ((length(psc)<>10))) then checkRC:=false
+  else checkRC:=true;
+end;
+procedure vloz();
+var check:boolean;
+    rcBool:boolean;
+    i:byte;
+    rok,mesiac,den,denPoradie:Word;
+    rokPsc,mesiacPsc,denPsc:string;
+begin
+  cursoron;
+  clrscr;
+  GetDate(rok,mesiac,den,denPoradie);
+  writeln( '--- VLOZIT STUDENTA ---       ' );
+  //MENO ŠTUDENTA
+  write('Zadaj meno studenta  ');
+  repeat
+  gotoxy(21,2);
+  clreol;
+  readln(student.meno);
+  until checkNum(student.meno)=false;
+  //PRIEZVISKO ŠTUDENTA
+  write('Zadaj priezvisko studenta ');
+  repeat
+  gotoxy(27,3);
+  clreol;
+  readln(student.priezvisko);
+  until checkNum(student.priezvisko)=false;
+  //RODNÉ ČÍSLO
+  writeln('Zadaj rodne cislo studenta ');
+  repeat
+  check:=true;
+  gotoxy(28,4);
+  clreol;
+  readln(student.psc);
+  rcBool:=checkRC(student.psc);
+  until (rcBool) ;
+  //POHLAVIE
+  if ((student.psc[3]='0') or (student.psc[3]='1')) then student.pohlavie:=true
+  else student.pohlavie:=false;
+
+  //VEK ŠTUDENTA
+  rokPsc:=Copy(student.psc,1,2);
+  mesiacPsc:=Copy(student.psc,3,2);
+  denPsc:=Copy(student.psc,5,2);
+  student.vek:=vratVek(rok,mesiac,den,rokPsc,mesiacPsc,denPsc);
+  //ZÁPIS ŠTUDENTA
+  writeln(student.vek);
+  seek(subor,filesize(subor));
+  write(subor,student);
+
+
+end;
+
+procedure najdi();
+begin
+end;
+
+
+
+procedure vypis();
+begin
+end;
+
+procedure menu();
+begin
+writeln('                                                 --- DATABAZA STUDENTOV ---            ');
+  writeln('                                                    1.Vlozit studenta              ');
+  writeln('                                                    2.Najdi studenta            ');
+  writeln('                                                    3.Vypis studenta            ');
+  writeln('                                                    4.Koniec                ');
+
+end;
+
+
+
+begin
+  TextColor(14);
+  TextBackground(1);
+  assign(subor,'C:\Users\Peter\Desktop\data.dat');
+  reset(subor);
+  while True do begin
+  cursoroff;
+  clrscr;
+  menu();
+  volba:=readkey();
+
+  case volba of
+       '1':vloz();
+       '2':najdi();
+       '3':vypis();
+       '4':Exit();
+       end;
+  end;
+
+  close(subor);
+end.

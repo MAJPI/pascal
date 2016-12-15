@@ -8,11 +8,10 @@ type Tstudent=record
               rc:string[10];
               end;
 var sub:file of Tstudent;
-    student:Tstudent;
+    student,studenth:Tstudent;
     volba:char;
-procedure vloz;
-var po:char;
-function RCOK(rc:string):boolean;
+
+function RCOK(rc:string):boolean; //TRUE -> RC je v poriadku
 var i:byte;
     flag:boolean;
 begin
@@ -20,12 +19,37 @@ flag:=true;
 for i:=1 to 10 do begin
                   if NOT(rc[i]>='0')AND(rc[i]<='9') then flag:=false;
                   end;
+if NOT(rc[3]='0')OR(rc[3]='1')OR(rc[3]='5')OR(rc[3]='6') then flag:=false;
 RCOK:=flag;
 end;
+function RCJE(rc:string):boolean; //TRUE -> ak je RC v databaze
+var flag:boolean;
+begin
+flag:=false;
+seek(sub,0);
+while NOT(eof(sub)) do begin
+                       read(sub,student);
+                       if rc=student.rc then begin
+                                             flag:=TRUE;
+                                             studenth:=student;
+                                             end;
+                       end;
+RCJE:=flag;
+end;
+procedure vloz;
+var po:char;
+    rcpod:string[10];
 begin
 clrscr;
 cursoron;
 writeln('                     *** VLOZENIE NOVEHO STUDENTA ***');
+write('Zadaj rodne cislo studenta v tvare (rrmmddabcd) bez lom.: ');
+repeat
+repeat
+readln(rcpod);
+until RCOK(rcpod);
+until NOT(RCJE(rcpod));
+student.rc:=rcpod;
 write('Zadaj meno studenta: ');
 readln(student.meno);
 write('Zadaj priezvisko studenta: ');
@@ -39,17 +63,22 @@ until (po='m')OR(po='z');
 if po='m' then student.pohlavie:=true
           else student.pohlavie:=false;
 writeln;
-write('Zadaj rodne cislo studenta v tvare (rrmmddabcd) bez lom.: ');
-repeat
-readln(student.rc);
-until RCOK(student.rc);
 seek(sub,filesize(sub));
 write(sub,student);
 end;
 procedure najdi;
+var rchlad:string[10];
 begin
 clrscr;
-writeln('Zacala procedura najdi');
+cursoron;
+writeln('                     *** NAJDENIE STUDENTA V DATABAZE ***');
+write('Zadaj rodne cislo studenta v tvare (rrmmddabcd) bez lom.: ');
+repeat
+readln(rchlad);
+until RCOK(rchlad);
+if RCJE(rchlad) then writeln(studenth.meno,' ',student.priezvisko)
+                else writeln('Zadany student sa nenachadza v databaze!');
+
 readln;
 end;
 procedure vypis;

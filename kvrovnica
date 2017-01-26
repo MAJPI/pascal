@@ -1,0 +1,29 @@
+program kvrovnica;
+uses crt;
+var a,b,c,D:integer;
+    x1,x2:real;
+
+begin
+clrscr;
+repeat
+write('Zadaj koeficient (a) kvadratickej rovnice: ');
+readln(a);
+if a=0 then writeln('Koeficient (a) sa nesmie rovnat 0!');
+until a<>0;
+write('Zadaj koeficient (b) kvadratickej rovnice: ');
+readln(b);
+write('Zadaj koeficient (c) kvadratickej rovnice: ');
+readln(c);
+D:=(b*b)-(4*a*c);
+if D<0 then writeln('Rovnica nema v obore R riesenie.');
+if D=0 then begin
+            x1:=-b/(2*a);
+            writeln('Rovnica ma jeden koren: x1=',x1:0:2);
+            end;
+if D>0 then begin
+            x1:=(-b+sqrt(D))/(2*a);
+            x2:=(-b-sqrt(D))/(2*a);
+            writeln('Rovnica ma dva korene: x1=',x1:0:2,' x2=',x2:0:2);
+            end;
+readln;
+end.
